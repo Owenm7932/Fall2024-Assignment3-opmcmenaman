@@ -1,0 +1,37 @@
+﻿@model Fall2024_Assignment3_opmcmenaman.Models.ActorDetailsViewModel
+
+<h1>@Model.Actor.Name</h1>
+<p>Gender: @Model.Actor.Gender</p>
+<p>Age: @Model.Actor.Age</p>
+<p><a href="@Model.Actor.IMDBLink" target="_blank">IMDB Profile</a></p>
+
+<h2>Overall Sentiment: @Model.OverallSentiment.ToString("0.###")</h2>
+
+<h3>AI-Generated Tweets</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Tweet</th>
+            <th>Sentiment Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tweet in Model.AITweets)
+        {
+            <tr>
+                <td>@tweet.Text</td>
+                <td>@tweet.SentimentScore.ToString("0.###")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h4>Movies</h4>
+<ul>
+    @foreach (var movie in Model.Actor.MovieActors.Select(ma => ma.Movie))
+    {
+        <li>@movie.Title</li>
+    }
+</ul>
+
+

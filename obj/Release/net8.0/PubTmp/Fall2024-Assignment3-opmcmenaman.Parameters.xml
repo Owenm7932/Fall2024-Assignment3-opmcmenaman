@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<parameters>
+  <parameter name="IIS Web Application Name" description="" value="Fall2024-Assignment3-opmcmenaman" tags="IisApp">
+    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Users\\omcme\\Desktop\\ASenior1\\CS\ 330\\Project\ 3\\Fall2024-Assignment3-opmcmenaman\\Fall2024-Assignment3-opmcmenaman\\obj\\Release\\net8\.0\\PubTmp\\Out\\$" />
+  </parameter>
+</parameters>
