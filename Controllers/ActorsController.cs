@@ -36,7 +36,7 @@ namespace Fall2024_Assignment3_opmcmenaman.Controllers
 
             var actor = await _context.Actors
                 .Include(a => a.MovieActors)
-                    .ThenInclude(ma => ma.Movie) // Access movies via the join entity
+                    .ThenInclude(ma => ma.Movie) 
                 .FirstOrDefaultAsync(a => a.ActorId == id);
 
             if (actor == null)
@@ -44,18 +44,15 @@ namespace Fall2024_Assignment3_opmcmenaman.Controllers
                 return NotFound();
             }
 
-            // Generate AI tweets
             var tweets = await _openAIService.GenerateTweetsAsync(actor.Name);
 
-            // Calculate sentiment for each tweet
             double sentimentSum = tweets.Sum(t => t.SentimentScore);
             double overallSentiment = tweets.Count > 0 ? sentimentSum / tweets.Count : 0;
 
-            // Pass information to the view model
             var viewModel = new ActorDetailsViewModel
             {
                 Actor = actor,
-                Movies = actor.MovieActors.Select(ma => ma.Movie).ToList(), // Retrieve movies through MovieActors
+                Movies = actor.MovieActors.Select(ma => ma.Movie).ToList(),
                 AITweets = tweets,
                 OverallSentiment = overallSentiment
             };

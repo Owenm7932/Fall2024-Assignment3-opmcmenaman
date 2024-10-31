@@ -55,22 +55,18 @@ public class OpenAIService
     {
 
         var client = CreateClient();
-        // Set up a message instructing the AI to return strict JSON with no extra text
         var messages = new ChatMessage[]
         {
         new SystemChatMessage("You are Twitter. Only respond with a valid JSON array of tweet objects, each containing 'username' and 'tweet' keys, and starting with '['. Do not add any additional text or explanations."),
         new UserChatMessage($"Generate 20 tweets from various users about the actor {actorName}.")
         };
 
-        // Call the API
         ClientResult<ChatCompletion> result = await client.CompleteChatAsync(messages);
         string tweetsJsonString = result.Value.Content.FirstOrDefault()?.Text ?? "[]";
 
-        // Initialize list for tweets and sentiment analyzer
         var tweetsList = new List<Tweet>();
         var analyzer = new SentimentIntensityAnalyzer();
 
-        // Parse the JSON and compute sentiment
         try
         {
             var jsonArray = JsonNode.Parse(tweetsJsonString)?.AsArray();

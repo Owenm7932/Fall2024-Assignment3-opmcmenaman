@@ -1,13 +1,20 @@
 ﻿@model Fall2024_Assignment3_opmcmenaman.Models.ActorDetailsViewModel
 
-<h1>@Model.Actor.Name</h1>
-<p>Gender: @Model.Actor.Gender</p>
-<p>Age: @Model.Actor.Age</p>
-<p><a href="@Model.Actor.IMDBLink" target="_blank">IMDB Profile</a></p>
+<div class="row mb-4">
+    <div class="col-md-4 text-center">
+        <img src="@Model.Actor.PhotoURL" alt="Photo of @Model.Actor.Name" style="max-width: 100%; height: auto; border-radius: 10px;" />
+    </div>
+    <div class="col-md-8">
+        <h1>@Model.Actor.Name</h1>
+        <p><strong>Gender:</strong> @Model.Actor.Gender</p>
+        <p><strong>Age:</strong> @Model.Actor.Age</p>
+        <p><strong>IMDB Profile:</strong> <a href="@Model.Actor.IMDBLink" target="_blank">View</a></p>
+    </div>
+</div>
 
-<h2>Overall Sentiment: @Model.OverallSentiment.ToString("0.###")</h2>
+<h2 class="mt-4">Overall Sentiment: @Model.OverallSentiment.ToString("0.###")</h2>
 
-<h3>AI-Generated Tweets</h3>
+<h3 class="mt-4">AI-Generated Tweets</h3>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -34,4 +41,4 @@
     }
 </ul>
 
-
+<a href="/Actors" class="btn btn-secondary mt-3">Back to List</a>

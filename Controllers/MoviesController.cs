@@ -45,10 +45,8 @@ namespace Fall2024_Assignment3_opmcmenaman.Controllers
                 return NotFound();
             }
 
-            // Generate AI reviews with personas
             var reviews = await _openAIService.GenerateReviewsAsync(movie.Title, movie.YearOfRelease);
 
-            // Calculate sentiment for each review and prepare for display
             double sentimentSum = 0;
             int reviewCount = 0;
             var reviewsWithSentiments = new List<string>();
@@ -63,49 +61,79 @@ namespace Fall2024_Assignment3_opmcmenaman.Controllers
 
             double overallSentimentAverage = reviewCount > 0 ? sentimentSum / reviewCount : 0;
 
-            // Get all actors for the dropdown selection in the view
             var allActors = await _context.Actors.ToListAsync();
 
-            // Use the join entity to get actors associated with the movie and all actors for the dropdown
             var viewModel = new MovieDetailsViewModel
             {
                 Movie = movie,
                 AIReviews = reviewsWithSentiments,
                 OverallSentiment = overallSentimentAverage,
                 Actors = movie.MovieActors.Select(ma => ma.Actor).ToList(),
-                AllActors = allActors // Populate all available actors
+                AllActors = allActors
+            };
+
+            return View(viewModel);
+        }
+
+        public async Task<IActionResult> ManageActors(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var movie = await _context.Movies
+                .Include(m => m.MovieActors)
+                    .ThenInclude(ma => ma.Actor)
+                .FirstOrDefaultAsync(m => m.MovieId == id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            var assignedActorIds = movie.MovieActors.Select(ma => ma.ActorId).ToList();
+
+            var availableActors = await _context.Actors
+                .Where(a => !assignedActorIds.Contains(a.ActorId))
+                .ToListAsync();
+
+            var viewModel = new ManageMovieActorsViewModel
+            {
+                Movie = movie,
+                AssignedActors = movie.MovieActors.Select(ma => ma.Actor).ToList(),
+                AvailableActors = availableActors
             };
 
             return View(viewModel);
         }
 
 
+
         [HttpPost]
-        public async Task<IActionResult> AddActorToMovie(string movieId, string actorId)
+        public async Task<IActionResult> AddActor(string movieId, string actorId)
         {
             if (string.IsNullOrEmpty(movieId) || string.IsNullOrEmpty(actorId))
             {
                 return BadRequest("MovieId and ActorId must be provided.");
             }
 
-            var movieActor = new MovieActor
-            {
-                MovieId = movieId,
-                ActorId = actorId
-            };
-
-            // Check if the association already exists
             if (!_context.MovieActors.Any(ma => ma.MovieId == movieId && ma.ActorId == actorId))
             {
+                var movieActor = new MovieActor
+                {
+                    MovieId = movieId,
+                    ActorId = actorId
+                };
                 _context.MovieActors.Add(movieActor);
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Details", new { id = movieId });
+            return RedirectToAction("ManageActors", new { id = movieId });
         }
 
         [HttpPost]
-        public async Task<IActionResult> RemoveActorFromMovie(string movieId, string actorId)
+        public async Task<IActionResult> RemoveActor(string movieId, string actorId)
         {
             if (string.IsNullOrEmpty(movieId) || string.IsNullOrEmpty(actorId))
             {
@@ -121,7 +149,7 @@ namespace Fall2024_Assignment3_opmcmenaman.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction("Details", new { id = movieId });
+            return RedirectToAction("ManageActors", new { id = movieId });
         }
 
 

@@ -1,11 +1,19 @@
 ﻿@model Fall2024_Assignment3_opmcmenaman.Models.MovieDetailsViewModel
 
-<h2>@Model.Movie.Title</h2>
-<p><strong>Genre:</strong> @Model.Movie.Genre</p>
-<p><strong>Year of Release:</strong> @Model.Movie.YearOfRelease</p>
-<p><strong>Overall Sentiment:</strong> @Model.OverallSentiment</p>
+<div class="row mb-4">
+    <div class="col-md-4 text-center">
+        <img src="@Model.Movie.PosterURL" alt="Poster for @Model.Movie.Title" style="max-width: 100%; height: auto; border-radius: 10px;" />
+    </div>
+    <div class="col-md-8">
+        <h2>@Model.Movie.Title</h2>
+        <p><strong>Genre:</strong> @Model.Movie.Genre</p>
+        <p><strong>Year of Release:</strong> @Model.Movie.YearOfRelease</p>
+    </div>
+</div>
 
-<h3>AI Reviews</h3>
+<h2 class="mt-4">Overall Sentiment: @Model.OverallSentiment.ToString("0.####")</h2>
+
+<h3 class="mt-4">AI Reviews</h3>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -16,10 +24,10 @@
     <tbody>
         @foreach (var review in Model.AIReviews)
         {
-            <tr>
-                <td>@review.Split('(')[0].Trim()</td>
-                <td>@review.Split('(')[1].Replace("Sentiment Score:", "").Replace(")", "").Trim()</td>
-            </tr>
+                <tr>
+                    <td>@review.Split('(')[0].Trim()</td>
+                    <td>@review.Split('(')[1].Replace("Sentiment Score:", "").Replace(")", "").Trim()</td>
+                </tr>
         }
     </tbody>
 </table>
@@ -28,28 +36,12 @@
 <ul>
     @foreach (var actor in Model.Actors)
     {
-        <li>
-            @actor.Name
-            <form asp-action="RemoveActorFromMovie" method="post" style="display:inline;">
-                <input type="hidden" name="movieId" value="@Model.Movie.MovieId" />
-                <input type="hidden" name="actorId" value="@actor.ActorId" />
-                <button type="submit" class="btn btn-danger btn-sm">Remove</button>
-            </form>
-        </li>
+            <li>@actor.Name</li>
     }
 </ul>
 
+<a asp-action="ManageActors" asp-route-id="@Model.Movie.MovieId" class="btn btn-primary">
+    Manage Actors
+</a>
 
-<h3>Add Actor to Movie</h3>
-<form asp-action="AddActorToMovie" method="post">
-    <input type="hidden" name="movieId" value="@Model.Movie.MovieId" />
-    <select name="actorId" class="form-control">
-        @foreach (var actor in Model.AllActors)
-        {
-            <option value="@actor.ActorId">@actor.Name</option>
-        }
-    </select>
-    <button type="submit" class="btn btn-primary">Add Actor</button>
-</form>
-
-<a href="/Movies">Back to List</a>
+<a href="/Movies" class="btn btn-secondary">Back to List</a>
