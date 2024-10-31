@@ -4,16 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load user secrets (for local development)
 builder.Configuration.AddUserSecrets<Program>();
 
-// Retrieve sensitive values from configuration
 var dbUsername = builder.Configuration["DbUsername"];
 var dbPassword = builder.Configuration["DbPassword"];
 var openAiApiKey = builder.Configuration["OpenAI:ApiKey"];
 var openAiEndpoint = builder.Configuration["OpenAI:Endpoint"];
 
-// Build the connection string using environment variables or user secrets
 var connectionString = $"Server=tcp:fall2024-assignment3-opmcmenaman.database.windows.net,1433;Initial Catalog=Fall2024-Assignment3-opmcmenaman;Persist Security Info=False;User ID={dbUsername};Password={dbPassword};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -30,7 +27,6 @@ builder.Services.AddSingleton<OpenAIService>(sp => new OpenAIService(openAiApiKe
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
